@@ -58,3 +58,11 @@ Restruturacação da entidade Producer:
 
 - Criar uma nova entidade com relacionamento na propriedade "plantation", para que as plantações não fiquem travadas somente nas opções Soja, Milho, Algodão, Café, Cana de Açucar;
 - Com esta nova entidade poderiamos melhorar a implementação / performance atual da rota `GET /dashboard`, onde conseguiriamos fazer um "distinct" por plantação.
+
+# Considerações Finais
+
+Agradeço a oportunidade de participar deste processo seletivo. Estou disponível para discutir qualquer aspecto da implementação ou responder a quaisquer perguntas.
+
+# Autor
+
+Caio Fugii
