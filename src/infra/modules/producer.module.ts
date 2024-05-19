@@ -9,12 +9,15 @@ import { GetProducersUseCase } from '../../usecases/get-producers.usecase';
 import { TypeOrmProducerRepository } from '../database/postgres/producer.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProducerTypeOrmEntity } from '../database/postgres/typeorm/producer.entity';
+import { DashboardController } from '../../presentation/http/dashboard.controller';
+import { GetStatsUseCase } from '../../usecases/get-stats-dashboard.usecase';
 
 @Module({
   imports: [TypeOrmModule.forFeature([ProducerTypeOrmEntity])],
-  controllers: [ProducerController],
+  controllers: [ProducerController, DashboardController],
   providers: [
     Logger,
+    GetStatsUseCase,
     CreateProducerUseCase,
     UpdateProducerUseCase,
     GetByIdProducerUseCase,

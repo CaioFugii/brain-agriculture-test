@@ -10,4 +10,10 @@ export type ProducerSearchParams = {
   state?: string;
 };
 
-export interface IProducerRepository extends IRepository<Producer> {}
+export interface IProducerRepository extends IRepository<Producer> {
+  getTotalAreaCount(): Promise<number>;
+  getTotalAreaCountHectares(): Promise<number>;
+  getStatsByState(): Promise<{ state: string; count: number }[]>;
+  getStatsByLandUsage(): Promise<{ land_usage: string; count: number }[]>;
+  getStatsByPlantation(): Promise<{ plantation: string; count: number }[]>;
+}

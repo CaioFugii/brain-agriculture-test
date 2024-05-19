@@ -4,7 +4,7 @@ import {
   IProducerRepository,
   ProducerSearchParams,
 } from '../interfaces/producer-repository.interface';
-import { ILike, Like, Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { ProducerTypeOrmEntity } from './typeorm/producer.entity';
 import { DomainError } from '../../../commons/application/exceptions/exception';
 import { TypeOrmProducerMapper } from '../mappers/producer.mapper';
@@ -79,7 +79,6 @@ export class TypeOrmProducerRepository implements IProducerRepository {
       );
     }
   }
-
   async findById(id: string): Promise<Producer | null> {
     try {
       const entity = await this.repository.findOneBy({ id });
@@ -103,5 +102,97 @@ export class TypeOrmProducerRepository implements IProducerRepository {
         500,
       );
     }
+  }
+  async getTotalAreaCount(): Promise<number> {
+    try {
+      return await this.repository.count();
+    } catch (error) {
+      throw new DomainError(
+        `Something wrong with database, error: ${error?.message}`,
+        500,
+      );
+    }
+  }
+  async getTotalAreaCountHectares(): Promise<number> {
+    try {
+      const count = await this.repository
+        .createQueryBuilder()
+        .select('SUM(total_area)', 'total_area')
+        .getRawOne();
+
+      return +count.total_area;
+    } catch (error) {
+      throw new DomainError(
+        `Something wrong with database, error: ${error?.message}`,
+        500,
+      );
+    }
+  }
+  async getStatsByState(): Promise<{ state: string; count: number }[]> {
+    const result = await this.repository
+      .createQueryBuilder()
+      .select('state', 'state')
+      .addSelect('COUNT(id)', 'count')
+      .groupBy('state')
+      .getRawMany();
+
+    return result.map((result) => ({ ...result, count: +result.count }));
+  }
+  async getStatsByLandUsage(): Promise<
+    { land_usage: string; count: number }[]
+  > {
+    const [arableArea, vegetationArea] = await Promise.all([
+      this.repository
+        .createQueryBuilder()
+        .select("'Arable Area'", 'land_usage')
+        .addSelect('SUM(arable_area)', 'total_area')
+        .getRawOne(),
+      this.repository
+        .createQueryBuilder()
+        .select("'Vegetation Area'", 'land_usage')
+        .addSelect('SUM(vegetation_area)', 'total_area')
+        .getRawOne(),
+    ]);
+
+    return [arableArea, vegetationArea].map((result) => ({
+      ...result,
+      total_area: +result.total_area,
+    }));
+  }
+
+  async getStatsByPlantation(): Promise<
+    { plantation: string; count: number }[]
+  > {
+    const [soyCount, cornCount, cottonCount, coffeeCount, sugarCaneCount] =
+      await Promise.all([
+        this.repository
+          .createQueryBuilder()
+          .where(':value = ANY(plantation)', { value: 'soja' })
+          .getCount(),
+        this.repository
+          .createQueryBuilder()
+          .where(':value = ANY(plantation)', { value: 'milho' })
+          .getCount(),
+        this.repository
+          .createQueryBuilder()
+          .where(':value = ANY(plantation)', { value: 'algodão' })
+          .getCount(),
+        this.repository
+          .createQueryBuilder()
+          .where(':value = ANY(plantation)', { value: 'café' })
+          .getCount(),
+        this.repository
+          .createQueryBuilder()
+          .where(':value = ANY(plantation)', { value: 'cana de açúcar' })
+          .getCount(),
+      ]);
+
+    return [
+      { plantation: 'Soja', count: soyCount },
+      { plantation: 'Milho', count: cornCount },
+      { plantation: 'Algodão', count: cottonCount },
+      { plantation: 'Café', count: coffeeCount },
+      { plantation: 'Cana de açúcar', count: sugarCaneCount },
+    ];
   }
 }
