@@ -38,10 +38,23 @@ Após estes passos a aplicação estará rodando em http://localhost:3000, e cas
 
 ## Endpoints Disponíveis
 
-Context: Producer - `POST /producer`: Cria uma nova entidade. - `GET /producer`: Retorna uma lista de entidades. - `PUT /producer/{id}`: Atualiza uma entidade existente. - `GET /producer/{id}`: Retorna uma entidade existente. - `DELETE /producer/{id}`: Deleta uma entidade existente.
+Context:
 
-Context: Dashboard - `GET /dashboard`: Retorna conteúdo para alimentar dashboard.
+- Producer
+  - `POST /producer`: Cria uma nova entidade.
+  - `GET /producer`: Retorna uma lista de entidades.
+  - `PUT /producer/{id}`: Atualiza uma entidade existente.
+  - `GET /producer/{id}`: Retorna uma entidade existente.
+  - `DELETE /producer/{id}`: Deleta uma entidade existente.
+
+Context:
+
+- Dashboard
+  - `GET /dashboard`: Retorna conteúdo para alimentar dashboard.
 
 ## Possíveis Melhorias
 
-Restruturacação da entidade Producer: - Criar uma nova entidade com relacionamento na propriedade "plantation", para que as plantações não fiquem travadas somente nas opções Soja, Milho, Algodão, Café, Cana de Açucar; - Com esta nova entidade poderiamos melhorar a implementação / performance atual da rota `GET /dashboard`, onde conseguiriamos fazer um "distinct" por plantação.
+Restruturacação da entidade Producer:
+
+- Criar uma nova entidade com relacionamento na propriedade "plantation", para que as plantações não fiquem travadas somente nas opções Soja, Milho, Algodão, Café, Cana de Açucar;
+- Com esta nova entidade poderiamos melhorar a implementação / performance atual da rota `GET /dashboard`, onde conseguiriamos fazer um "distinct" por plantação.
