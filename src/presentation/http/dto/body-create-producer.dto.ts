@@ -14,6 +14,7 @@ import {
 import { IsValidPlantationConstraint } from '../../../commons/application/dtos/is-valid-plantation.dto';
 import { IsCPFOrCNPJ } from '../../../commons/application/dtos/is-cpf-or-cnpj.dto';
 import { IsValidArea } from '../../../commons/application/dtos/is-valid-area.dto';
+import { Transform } from 'class-transformer';
 
 export class BodyCreateProducerDTO {
   @ApiProperty({

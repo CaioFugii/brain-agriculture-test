@@ -8,6 +8,7 @@ import {
   Post,
   Put,
   Query,
+  UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
 import {

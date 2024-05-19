@@ -25,7 +25,6 @@ export class Producer extends Entity<ProducerProperties> {
   private _total_area: number;
   private _arable_area: number;
   private _vegetation_area: number;
-  private _plantation: string[];
   private _created_at?: Date;
   private _updated_at?: Date;
 
@@ -39,7 +38,7 @@ export class Producer extends Entity<ProducerProperties> {
     this._total_area = props.total_area ?? 0;
     this._arable_area = props.arable_area ?? 0;
     this._vegetation_area = props.vegetation_area ?? 0;
-    this._plantation = props.plantation;
+    this.plantation = props.plantation;
     this.props.created_at = props.created_at ?? new Date();
     this.props.updated_at = props.updated_at ?? new Date();
     this._validate();
@@ -69,14 +68,18 @@ export class Producer extends Entity<ProducerProperties> {
   get vegetation_area() {
     return this._vegetation_area;
   }
-  get plantation() {
-    return this._plantation;
-  }
+
   get created_at() {
     return this._created_at;
   }
   get updated_at() {
     return this._updated_at;
+  }
+  get plantation() {
+    return this.props.plantation;
+  }
+  private set plantation(values: string[]) {
+    this.props.plantation = values.map((item) => item.toLowerCase());
   }
 
   update(props: ProducerProperties) {
@@ -88,7 +91,7 @@ export class Producer extends Entity<ProducerProperties> {
     this.props.total_area = props.total_area;
     this.props.arable_area = props.arable_area;
     this.props.vegetation_area = props.vegetation_area;
-    this.props.plantation = props.plantation;
+    this.plantation = props.plantation;
     this.props.updated_at = new Date();
     this._validate();
   }

@@ -13,9 +13,9 @@ export class DashboardController {
   async get() {
     try {
       this.logger.log(`Trying to get data to dashboard`);
-      await this.getStatsUseCase.execute();
-
+      const result = await this.getStatsUseCase.execute();
       this.logger.log('Successfully retrieved');
+      return result;
     } catch (error) {
       this.logger.error(error);
       throw error;
