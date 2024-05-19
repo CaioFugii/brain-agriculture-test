@@ -1,17 +1,13 @@
 import { randomUUID } from 'crypto';
 
 export default abstract class Entity<Props = any> {
-  public readonly uniqueEntityId: string;
+  public readonly id: string;
 
   constructor(
     public readonly props: Props,
     id?: string,
   ) {
-    this.uniqueEntityId = id || randomUUID();
-  }
-
-  get id() {
-    return this.uniqueEntityId;
+    this.id = id || randomUUID();
   }
 
   toJSON(): Required<{ id: string } & Props> {
@@ -20,6 +16,4 @@ export default abstract class Entity<Props = any> {
       ...this.props,
     } as Required<{ id: string } & Props>;
   }
-
-  abstract _validate(): void;
 }

@@ -1,32 +1,20 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  ArrayNotEmpty,
-  IsArray,
-  IsInt,
-  IsNotEmpty,
-  IsString,
-  Max,
-  MaxLength,
-  Min,
-  MinLength,
-  Validate,
-} from 'class-validator';
-import { IsValidPlantationConstraint } from './commons/is-valid-plantation.dto';
-import { IsCPFOrCNPJ } from './commons/is-cpf-or-cnpj.dto';
-import { IsValidArea } from './commons/is-valid-area.dto';
 
-export class BodyCreateProducerDTO {
+class ProducerDTO {
+  @ApiProperty({
+    description: 'Id of producer to update',
+    type: String,
+    required: true,
+    example: '874cf522-223f-42a9-9e4f-c8345c39a647',
+  })
+  id: string;
+
   @ApiProperty({
     description: 'CPF / CNPJ of rural producer',
     type: String,
     required: true,
     example: '12345678910',
   })
-  @IsString()
-  @IsNotEmpty()
-  @MaxLength(18)
-  @MinLength(11)
-  @IsCPFOrCNPJ()
   document: string;
 
   @ApiProperty({
@@ -35,9 +23,6 @@ export class BodyCreateProducerDTO {
     required: true,
     example: 'Tonic Milho producer',
   })
-  @IsString()
-  @IsNotEmpty()
-  @MaxLength(100)
   producer_name: string;
 
   @ApiProperty({
@@ -46,9 +31,6 @@ export class BodyCreateProducerDTO {
     required: true,
     example: 'Milharal farm',
   })
-  @IsString()
-  @IsNotEmpty()
-  @MaxLength(100)
   farm_name: string;
 
   @ApiProperty({
@@ -57,9 +39,6 @@ export class BodyCreateProducerDTO {
     required: true,
     example: 'Campinas',
   })
-  @IsString()
-  @IsNotEmpty()
-  @MaxLength(60)
   city: string;
 
   @ApiProperty({
@@ -68,9 +47,6 @@ export class BodyCreateProducerDTO {
     required: true,
     example: 'São Paulo',
   })
-  @IsString()
-  @IsNotEmpty()
-  @MaxLength(60)
   state: string;
 
   @ApiProperty({
@@ -79,10 +55,6 @@ export class BodyCreateProducerDTO {
     required: true,
     example: 50,
   })
-  @IsInt()
-  @Min(0)
-  @Max(10000000)
-  @IsValidArea()
   total_area: number;
 
   @ApiProperty({
@@ -91,9 +63,6 @@ export class BodyCreateProducerDTO {
     required: true,
     example: 30,
   })
-  @IsInt()
-  @Min(0)
-  @Max(10000000)
   arable_area: number;
 
   @ApiProperty({
@@ -102,9 +71,6 @@ export class BodyCreateProducerDTO {
     required: true,
     example: 20,
   })
-  @IsInt()
-  @Min(0)
-  @Max(10000000)
   vegetation_area: number;
 
   @ApiProperty({
@@ -113,20 +79,16 @@ export class BodyCreateProducerDTO {
     required: true,
     example: ['Soja', 'Milho', 'Algodão', 'Cana de açúcar'],
   })
-  @IsString({ each: true })
-  @IsArray()
-  @ArrayNotEmpty()
-  @Validate(IsValidPlantationConstraint)
   plantation: string[];
 }
 
-export class CreateProducerResponseDTO {
+export class GetProducerResponseDTO {
   @ApiProperty({
     description: 'Content',
   })
-  data: BodyCreateProducerDTO;
+  data: ProducerDTO;
 
-  constructor(data: BodyCreateProducerDTO) {
+  constructor(data: ProducerDTO) {
     this.data = data;
   }
 }

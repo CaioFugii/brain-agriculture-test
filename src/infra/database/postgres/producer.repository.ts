@@ -9,15 +9,30 @@ export class TypeOrmProducerRepository implements IProducerRepository {
     return Promise.resolve(entity);
   }
   update(entity: Producer): Promise<Producer | null> {
+    const index = this._mockDataBase.findIndex(
+      (databaseEntity) => databaseEntity.id === entity.id,
+    );
+
+    this._mockDataBase[index] = entity;
+
     return Promise.resolve(entity);
   }
   find(filter: Record<string, any>): Promise<[Producer[], number]> {
     return Promise.resolve([this._mockDataBase, this._mockDataBase.length]);
   }
   findById(id: string): Promise<Producer | null> {
-    return Promise.resolve(null);
+    const entity = this._mockDataBase.find((entity) => entity.id === id);
+
+    if (!entity) return Promise.resolve(null);
+
+    return Promise.resolve(entity);
   }
   delete(id: string): Promise<void> {
+    const index = this._mockDataBase.findIndex(
+      (databaseEntity) => databaseEntity.id === id,
+    );
+
+    this._mockDataBase.splice(index, 1);
     return Promise.resolve();
   }
 }

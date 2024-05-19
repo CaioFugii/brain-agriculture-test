@@ -1,15 +1,19 @@
 import { Module, ValidationPipe } from '@nestjs/common';
-import { ProducerController } from './presentation/http/producer.controller';
-import { APP_PIPE } from '@nestjs/core';
-import { IsValidArrayConstraint } from './presentation/http/dto/body-create-producer.dto';
+import { APP_FILTER, APP_PIPE } from '@nestjs/core';
+import { ProducerModule } from './infra/modules/producer.module';
+import { HttpExceptionFilter } from './commons/application/filters/http-exception.filter';
+import { LoggerModule } from './infra/modules/logger.module';
 
 @Module({
-  imports: [],
-  controllers: [ProducerController],
+  imports: [ProducerModule, LoggerModule],
   providers: [
     {
       provide: APP_PIPE,
       useClass: ValidationPipe,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: HttpExceptionFilter,
     },
   ],
 })

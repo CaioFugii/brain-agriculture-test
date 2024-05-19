@@ -1,6 +1,8 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { IProducerRepository } from '../infra/database/interfaces/producer-repository.interface';
 import { Producer } from '../domain/entities/producer';
+import { BodyCreateProducerDTO } from '../presentation/http/dto/body-create-producer.dto';
+import { Logger } from '../commons/application/logger/logger';
 
 @Injectable()
 export class CreateProducerUseCase {
@@ -9,7 +11,8 @@ export class CreateProducerUseCase {
     private readonly producerRepository: IProducerRepository,
   ) {}
 
-  async execute(payload: any): Promise<Producer> {
-    return await this.producerRepository.insert(payload);
+  async execute(payload: BodyCreateProducerDTO): Promise<Producer> {
+    const entityToPersist = new Producer(payload);
+    return await this.producerRepository.insert(entityToPersist);
   }
 }

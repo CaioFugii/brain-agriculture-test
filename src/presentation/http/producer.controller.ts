@@ -1,30 +1,131 @@
-import { Body, Controller, Delete, Get, Post, Put } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { BodyCreateProducerDTO } from './dto/body-create-producer.dto';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Logger,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
+import {
+  ApiBadRequestResponse,
+  ApiCreatedResponse,
+  ApiNoContentResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+import {
+  BodyCreateProducerDTO,
+  CreateProducerResponseDTO,
+} from './dto/body-create-producer.dto';
+import {
+  BodyUpdateProducerDTO,
+  UpdateProducerResponseDTO,
+} from './dto/body-update-producer.dto';
+import { CreateProducerUseCase } from '../../usecases/create-producer.usecase';
+import { UpdateProducerUseCase } from '../../usecases/update-producer.usecase';
+import { GetByIdProducerUseCase } from '../../usecases/get-by-id-producer.usecase';
+import { GetProducerResponseDTO } from './dto/get-producer-response.dto';
+import { DeleteProducerUseCase } from '../../usecases/delete-producer.usecase';
 
 @Controller('/producer')
 @ApiTags('Producer')
 export class ProducerController {
-  constructor() {}
+  private readonly logger = new Logger(ProducerController.name);
+  constructor(
+    private readonly createProducerUseCase: CreateProducerUseCase,
+    private readonly updateProducerUseCase: UpdateProducerUseCase,
+    private readonly getByIdProducerUseCase: GetByIdProducerUseCase,
+    private readonly deleteProducerUseCase: DeleteProducerUseCase,
+  ) {}
 
   @Post()
   @ApiOperation({ summary: 'Create a new Producer' })
-  create(@Body() input: BodyCreateProducerDTO) {
-    return {
-      message: 'O array contém apenas valores válidos.',
-      data: input,
-    };
+  @ApiCreatedResponse({
+    description: 'The record has been successfully created.',
+    type: CreateProducerResponseDTO,
+  })
+  @ApiBadRequestResponse({ status: 400, description: 'Bad Request' })
+  async create(
+    @Body() input: BodyCreateProducerDTO,
+  ): Promise<CreateProducerResponseDTO> {
+    try {
+      this.logger.log(
+        `Trying to create a new Producer: ${JSON.stringify(input)}`,
+      );
+      const result = await this.createProducerUseCase.execute(input);
+      this.logger.log('Successfully created');
+      return new CreateProducerResponseDTO(result);
+    } catch (error) {
+      this.logger.error(error);
+      throw error;
+    }
   }
 
   @Put('/:id')
-  update() {}
+  @ApiOperation({ summary: 'Update an exists Producer' })
+  @ApiOkResponse({
+    description: 'The record has been successfully updated.',
+    type: UpdateProducerResponseDTO,
+  })
+  @ApiBadRequestResponse({ status: 400, description: 'Bad Request' })
+  async update(
+    @Body() input: BodyUpdateProducerDTO,
+    @Param('id') id: string,
+  ): Promise<UpdateProducerResponseDTO> {
+    try {
+      this.logger.log(
+        `Trying to update an exists Producer: ${JSON.stringify(input)}, ID: ${id}`,
+      );
+      const result = await this.updateProducerUseCase.execute({ ...input, id });
+      this.logger.log('Successfully updated');
+      return new UpdateProducerResponseDTO(result);
+    } catch (error) {
+      this.logger.error(error);
+      throw error;
+    }
+  }
+
+  @Get('/:id')
+  @ApiOperation({ summary: 'Get an exists Producer' })
+  @ApiOkResponse({
+    description: 'The record has been successfully retrieved.',
+    type: GetProducerResponseDTO,
+  })
+  @ApiNotFoundResponse({ status: 404, description: 'Entity Not found' })
+  async getById(@Param('id') id: string) {
+    try {
+      this.logger.log(`Trying to get Producer with ID: ${id}`);
+      const result = await this.getByIdProducerUseCase.execute(id);
+      this.logger.log('Successfully retrieved');
+      return new GetProducerResponseDTO(result);
+    } catch (error) {
+      this.logger.error(error);
+      throw error;
+    }
+  }
 
   @Get()
   get() {}
 
-  @Get('/:id')
-  getById() {}
-
   @Delete('/:id')
-  delete() {}
+  @ApiOperation({ summary: 'Delete an exists Producer' })
+  @ApiNoContentResponse({
+    status: 204,
+    description: 'Entity successfully deleted',
+  })
+  async delete(@Param('id') id: string) {
+    try {
+      this.logger.log(`Trying to delete Producer with ID: ${id}`);
+      await this.deleteProducerUseCase.execute(id);
+      this.logger.log('Successfully deleted');
+    } catch (error) {
+      this.logger.error(error);
+      throw error;
+    }
+  }
 }
