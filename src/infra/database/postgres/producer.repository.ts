@@ -129,70 +129,91 @@ export class TypeOrmProducerRepository implements IProducerRepository {
     }
   }
   async getStatsByState(): Promise<{ state: string; count: number }[]> {
-    const result = await this.repository
-      .createQueryBuilder()
-      .select('state', 'state')
-      .addSelect('COUNT(id)', 'count')
-      .groupBy('state')
-      .getRawMany();
+    try {
+      const result = await this.repository
+        .createQueryBuilder()
+        .select('state', 'state')
+        .addSelect('COUNT(id)', 'count')
+        .groupBy('state')
+        .getRawMany();
 
-    return result.map((result) => ({ ...result, count: +result.count }));
+      return result.map((result) => ({ ...result, count: +result.count }));
+    } catch (error) {
+      throw new DomainError(
+        `Something wrong with database, error: ${error?.message}`,
+        500,
+      );
+    }
   }
   async getStatsByLandUsage(): Promise<
     { land_usage: string; count: number }[]
   > {
-    const [arableArea, vegetationArea] = await Promise.all([
-      this.repository
-        .createQueryBuilder()
-        .select("'Arable Area'", 'land_usage')
-        .addSelect('SUM(arable_area)', 'total_area')
-        .getRawOne(),
-      this.repository
-        .createQueryBuilder()
-        .select("'Vegetation Area'", 'land_usage')
-        .addSelect('SUM(vegetation_area)', 'total_area')
-        .getRawOne(),
-    ]);
+    try {
+      const [arableArea, vegetationArea] = await Promise.all([
+        this.repository
+          .createQueryBuilder()
+          .select("'Arable Area'", 'land_usage')
+          .addSelect('SUM(arable_area)', 'total_area')
+          .getRawOne(),
+        this.repository
+          .createQueryBuilder()
+          .select("'Vegetation Area'", 'land_usage')
+          .addSelect('SUM(vegetation_area)', 'total_area')
+          .getRawOne(),
+      ]);
 
-    return [arableArea, vegetationArea].map((result) => ({
-      ...result,
-      total_area: +result.total_area,
-    }));
+      return [arableArea, vegetationArea].map((result) => ({
+        ...result,
+        total_area: +result.total_area,
+      }));
+    } catch (error) {
+      throw new DomainError(
+        `Something wrong with database, error: ${error?.message}`,
+        500,
+      );
+    }
   }
 
   async getStatsByPlantation(): Promise<
     { plantation: string; count: number }[]
   > {
-    const [soyCount, cornCount, cottonCount, coffeeCount, sugarCaneCount] =
-      await Promise.all([
-        this.repository
-          .createQueryBuilder()
-          .where(':value = ANY(plantation)', { value: 'soja' })
-          .getCount(),
-        this.repository
-          .createQueryBuilder()
-          .where(':value = ANY(plantation)', { value: 'milho' })
-          .getCount(),
-        this.repository
-          .createQueryBuilder()
-          .where(':value = ANY(plantation)', { value: 'algodão' })
-          .getCount(),
-        this.repository
-          .createQueryBuilder()
-          .where(':value = ANY(plantation)', { value: 'café' })
-          .getCount(),
-        this.repository
-          .createQueryBuilder()
-          .where(':value = ANY(plantation)', { value: 'cana de açúcar' })
-          .getCount(),
-      ]);
+    try {
+      const [soyCount, cornCount, cottonCount, coffeeCount, sugarCaneCount] =
+        await Promise.all([
+          this.repository
+            .createQueryBuilder()
+            .where(':value = ANY(plantation)', { value: 'soja' })
+            .getCount(),
+          this.repository
+            .createQueryBuilder()
+            .where(':value = ANY(plantation)', { value: 'milho' })
+            .getCount(),
+          this.repository
+            .createQueryBuilder()
+            .where(':value = ANY(plantation)', { value: 'algodão' })
+            .getCount(),
+          this.repository
+            .createQueryBuilder()
+            .where(':value = ANY(plantation)', { value: 'café' })
+            .getCount(),
+          this.repository
+            .createQueryBuilder()
+            .where(':value = ANY(plantation)', { value: 'cana de açúcar' })
+            .getCount(),
+        ]);
 
-    return [
-      { plantation: 'Soja', count: soyCount },
-      { plantation: 'Milho', count: cornCount },
-      { plantation: 'Algodão', count: cottonCount },
-      { plantation: 'Café', count: coffeeCount },
-      { plantation: 'Cana de açúcar', count: sugarCaneCount },
-    ];
+      return [
+        { plantation: 'Soja', count: soyCount },
+        { plantation: 'Milho', count: cornCount },
+        { plantation: 'Algodão', count: cottonCount },
+        { plantation: 'Café', count: coffeeCount },
+        { plantation: 'Cana de açúcar', count: sugarCaneCount },
+      ];
+    } catch (error) {
+      throw new DomainError(
+        `Something wrong with database, error: ${error?.message}`,
+        500,
+      );
+    }
   }
 }
