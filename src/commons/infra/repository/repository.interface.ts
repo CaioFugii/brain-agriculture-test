@@ -1,4 +1,4 @@
-import Entity from '../entities/entity';
+import Entity from '../../domain/entities/entity';
 
 export interface IRepository<E extends Entity> {
   insert(entity: E): Promise<E>;

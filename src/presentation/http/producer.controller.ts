@@ -7,6 +7,8 @@ import {
   Param,
   Post,
   Put,
+  Query,
+  ValidationPipe,
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
@@ -29,8 +31,13 @@ import {
 import { CreateProducerUseCase } from '../../usecases/create-producer.usecase';
 import { UpdateProducerUseCase } from '../../usecases/update-producer.usecase';
 import { GetByIdProducerUseCase } from '../../usecases/get-by-id-producer.usecase';
-import { GetProducerResponseDTO } from './dto/get-producer-response.dto';
+import {
+  GetListProducersResponseDTO,
+  GetProducerResponseDTO,
+} from './dto/get-producer-response.dto';
 import { DeleteProducerUseCase } from '../../usecases/delete-producer.usecase';
+import { GetProducersParamsDTO } from './dto/get-producers.dto';
+import { GetProducersUseCase } from '../../usecases/get-producers.usecase';
 
 @Controller('/producer')
 @ApiTags('Producer')
@@ -40,6 +47,7 @@ export class ProducerController {
     private readonly createProducerUseCase: CreateProducerUseCase,
     private readonly updateProducerUseCase: UpdateProducerUseCase,
     private readonly getByIdProducerUseCase: GetByIdProducerUseCase,
+    private readonly getProducersUseCase: GetProducersUseCase,
     private readonly deleteProducerUseCase: DeleteProducerUseCase,
   ) {}
 
@@ -110,7 +118,31 @@ export class ProducerController {
   }
 
   @Get()
-  get() {}
+  @ApiOperation({ summary: 'Get list of Producers' })
+  @ApiOkResponse({
+    description: 'The records has been successfully retrieved.',
+    type: GetListProducersResponseDTO,
+  })
+  async get(
+    @Query(new ValidationPipe({ transform: true }))
+    params: GetProducersParamsDTO,
+  ) {
+    try {
+      this.logger.log(`Trying to get list of Producers`);
+      const [result, count] = await this.getProducersUseCase.execute(params);
+
+      this.logger.log('Successfully retrieved');
+      return new GetListProducersResponseDTO(
+        result,
+        count,
+        params.pageNumber ?? 1,
+        params.pageSize ?? 10,
+      );
+    } catch (error) {
+      this.logger.error(error);
+      throw error;
+    }
+  }
 
   @Delete('/:id')
   @ApiOperation({ summary: 'Delete an exists Producer' })

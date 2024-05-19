@@ -3,7 +3,7 @@ import {
   ValidatorConstraintInterface,
   ValidationArguments,
 } from 'class-validator';
-import { ValidateCPF } from '../../../../commons/utils/validate-cpf';
+import { ValidateCPF } from '../../utils/validate-cpf';
 
 @ValidatorConstraint({ name: 'IsValidCPF', async: false })
 export class IsValidCPF implements ValidatorConstraintInterface {

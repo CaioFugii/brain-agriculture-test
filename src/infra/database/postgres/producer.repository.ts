@@ -18,6 +18,7 @@ export class TypeOrmProducerRepository implements IProducerRepository {
     return Promise.resolve(entity);
   }
   find(filter: Record<string, any>): Promise<[Producer[], number]> {
+    console.log(this._mockDataBase.length);
     return Promise.resolve([this._mockDataBase, this._mockDataBase.length]);
   }
   findById(id: string): Promise<Producer | null> {

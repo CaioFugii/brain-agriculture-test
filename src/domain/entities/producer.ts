@@ -1,4 +1,4 @@
-import Entity from '../../commons/entities/entity';
+import Entity from '../../commons/domain/entities/entity';
 import { ValidateCNPJ } from '../../commons/utils/validate-cnpj';
 import { ValidateCPF } from '../../commons/utils/validate-cpf';
 

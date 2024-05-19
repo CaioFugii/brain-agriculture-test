@@ -3,7 +3,7 @@ import {
   ValidatorConstraint,
   ValidatorConstraintInterface,
 } from 'class-validator';
-import { ValidateCNPJ } from '../../../../commons/utils/validate-cnpj';
+import { ValidateCNPJ } from '../../utils/validate-cnpj';
 
 @ValidatorConstraint({ name: 'IsValidCNPJ', async: false })
 export class IsValidCNPJ implements ValidatorConstraintInterface {

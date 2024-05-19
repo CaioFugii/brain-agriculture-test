@@ -11,9 +11,9 @@ import {
   MinLength,
   Validate,
 } from 'class-validator';
-import { IsValidPlantationConstraint } from './commons/is-valid-plantation.dto';
-import { IsCPFOrCNPJ } from './commons/is-cpf-or-cnpj.dto';
-import { IsValidArea } from './commons/is-valid-area.dto';
+import { IsValidPlantationConstraint } from '../../../commons/application/dtos/is-valid-plantation.dto';
+import { IsCPFOrCNPJ } from '../../../commons/application/dtos/is-cpf-or-cnpj.dto';
+import { IsValidArea } from '../../../commons/application/dtos/is-valid-area.dto';
 
 export class BodyCreateProducerDTO {
   @ApiProperty({
