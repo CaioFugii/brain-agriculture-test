@@ -7,5 +7,3 @@ export interface IRepository<E extends Entity> {
   update(entity: E): Promise<E | null>;
   delete(id: string): Promise<void>;
 }
-
-export type SortDirection = 'asc' | 'desc';

@@ -40,8 +40,8 @@ export class Producer extends Entity<ProducerProperties> {
     this._arable_area = props.arable_area ?? 0;
     this._vegetation_area = props.vegetation_area ?? 0;
     this._plantation = props.plantation;
-    this._created_at = props.created_at ?? new Date();
-    this._updated_at = props.updated_at ?? new Date();
+    this.props.created_at = props.created_at ?? new Date();
+    this.props.updated_at = props.updated_at ?? new Date();
     this._validate();
   }
 
@@ -80,16 +80,16 @@ export class Producer extends Entity<ProducerProperties> {
   }
 
   update(props: ProducerProperties) {
-    this._document = props.document;
-    this._producer_name = props.producer_name;
-    this._farm_name = props.farm_name;
-    this._city = props.city;
-    this._state = props.state;
-    this._total_area = props.total_area;
-    this._arable_area = props.arable_area;
-    this._vegetation_area = props.vegetation_area;
-    this._plantation = props.plantation;
-    this._updated_at = new Date();
+    this.props.document = props.document;
+    this.props.producer_name = props.producer_name;
+    this.props.farm_name = props.farm_name;
+    this.props.city = props.city;
+    this.props.state = props.state;
+    this.props.total_area = props.total_area;
+    this.props.arable_area = props.arable_area;
+    this.props.vegetation_area = props.vegetation_area;
+    this.props.plantation = props.plantation;
+    this.props.updated_at = new Date();
     this._validate();
   }
 

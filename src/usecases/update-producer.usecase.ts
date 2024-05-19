@@ -1,6 +1,6 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { IProducerRepository } from '../infra/database/interfaces/producer-repository.interface';
-import { Producer } from '../domain/entities/producer';
+import { Producer } from '../domain/entities/producer.entity';
 import { BodyUpdateProducerDTO } from '../presentation/http/dto/body-update-producer.dto';
 
 @Injectable()
@@ -10,11 +10,11 @@ export class UpdateProducerUseCase {
     private readonly producerRepository: IProducerRepository,
   ) {}
 
-  async execute(payload: BodyUpdateProducerDTO): Promise<Producer> {
-    const foundedEntity = await this.producerRepository.findById(payload.id);
+  async execute(payload: BodyUpdateProducerDTO, id: string): Promise<Producer> {
+    const foundedEntity = await this.producerRepository.findById(id);
 
     if (!foundedEntity)
-      throw new NotFoundException(`Producer ${payload.id} does not exist`);
+      throw new NotFoundException(`Producer ${id} does not exist`);
 
     foundedEntity.update(payload);
 

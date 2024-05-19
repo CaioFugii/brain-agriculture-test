@@ -1,6 +1,6 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { IProducerRepository } from '../infra/database/interfaces/producer-repository.interface';
-import { Producer } from '../domain/entities/producer';
+import { Producer } from '../domain/entities/producer.entity';
 import { BodyUpdateProducerDTO } from '../presentation/http/dto/body-update-producer.dto';
 
 @Injectable()

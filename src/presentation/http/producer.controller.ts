@@ -89,7 +89,7 @@ export class ProducerController {
       this.logger.log(
         `Trying to update an exists Producer: ${JSON.stringify(input)}, ID: ${id}`,
       );
-      const result = await this.updateProducerUseCase.execute({ ...input, id });
+      const result = await this.updateProducerUseCase.execute(input, id);
       this.logger.log('Successfully updated');
       return new UpdateProducerResponseDTO(result);
     } catch (error) {

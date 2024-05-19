@@ -1,39 +1,107 @@
-import { Producer } from '../../../domain/entities/producer';
-import { IProducerRepository } from '../interfaces/producer-repository.interface';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Producer } from '../../../domain/entities/producer.entity';
+import {
+  IProducerRepository,
+  ProducerSearchParams,
+} from '../interfaces/producer-repository.interface';
+import { ILike, Like, Repository } from 'typeorm';
+import { ProducerTypeOrmEntity } from './typeorm/producer.entity';
+import { DomainError } from '../../../commons/application/exceptions/exception';
+import { TypeOrmProducerMapper } from '../mappers/producer.mapper';
 
 export class TypeOrmProducerRepository implements IProducerRepository {
-  private _mockDataBase = [];
+  constructor(
+    @InjectRepository(ProducerTypeOrmEntity)
+    private readonly repository: Repository<ProducerTypeOrmEntity>,
+  ) {}
 
-  insert(entity: Producer): Promise<Producer> {
-    this._mockDataBase.push(entity);
-    return Promise.resolve(entity);
+  async insert(entity: Producer): Promise<Producer> {
+    try {
+      await this.repository
+        .createQueryBuilder()
+        .insert()
+        .into(ProducerTypeOrmEntity)
+        .values([entity.toJSON()])
+        .execute();
+
+      return entity;
+    } catch (error) {
+      throw new DomainError(
+        `Something wrong with database, error: ${error?.message}`,
+        500,
+      );
+    }
   }
-  update(entity: Producer): Promise<Producer | null> {
-    const index = this._mockDataBase.findIndex(
-      (databaseEntity) => databaseEntity.id === entity.id,
-    );
+  async update(entity: Producer): Promise<Producer | null> {
+    try {
+      await this.repository
+        .createQueryBuilder()
+        .update(ProducerTypeOrmEntity, entity.toJSON())
+        .where('id = :id', { id: entity.id })
+        .execute();
 
-    this._mockDataBase[index] = entity;
-
-    return Promise.resolve(entity);
+      return entity;
+    } catch (error) {
+      throw new DomainError(
+        `Something wrong with database, error: ${error?.message}`,
+        500,
+      );
+    }
   }
-  find(filter: Record<string, any>): Promise<[Producer[], number]> {
-    console.log(this._mockDataBase.length);
-    return Promise.resolve([this._mockDataBase, this._mockDataBase.length]);
+  async find(filter: ProducerSearchParams): Promise<[Producer[], number]> {
+    try {
+      const query: Record<string, any> = {};
+
+      if (filter?.city) {
+        query.city = ILike(`%${filter?.city}%`);
+      }
+
+      if (filter?.state) {
+        query.state = ILike(`%${filter?.state}%`);
+      }
+
+      const [entities, count] = await Promise.all([
+        this.repository.find({
+          where: query,
+          order: {
+            [filter.orderBy]: filter.order?.toUpperCase(),
+          },
+          skip: filter.pageSize * (filter.pageNumber - 1),
+          take: filter.pageSize,
+        }),
+        this.repository.count({ where: query }),
+      ]);
+      return [entities.map(TypeOrmProducerMapper.toEntity), count];
+    } catch (error) {
+      throw new DomainError(
+        `Something wrong with database, error: ${error?.message}`,
+        500,
+      );
+    }
   }
-  findById(id: string): Promise<Producer | null> {
-    const entity = this._mockDataBase.find((entity) => entity.id === id);
 
-    if (!entity) return Promise.resolve(null);
+  async findById(id: string): Promise<Producer | null> {
+    try {
+      const entity = await this.repository.findOneBy({ id });
 
-    return Promise.resolve(entity);
+      if (!entity) return Promise.resolve(null);
+
+      return TypeOrmProducerMapper.toEntity(entity);
+    } catch (error) {
+      throw new DomainError(
+        `Something wrong with database, error: ${error?.message}`,
+        500,
+      );
+    }
   }
-  delete(id: string): Promise<void> {
-    const index = this._mockDataBase.findIndex(
-      (databaseEntity) => databaseEntity.id === id,
-    );
-
-    this._mockDataBase.splice(index, 1);
-    return Promise.resolve();
+  async delete(id: string): Promise<void> {
+    try {
+      await this.repository.delete({ id });
+    } catch (error) {
+      throw new DomainError(
+        `Something wrong with database, error: ${error?.message}`,
+        500,
+      );
+    }
   }
 }
