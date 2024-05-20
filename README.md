@@ -15,6 +15,7 @@ Esta aplicação é uma API em Node.js utilizando o framework NestJS. O objetivo
 - Class validator
 - Class transformer
 - Swagger
+- Jest
 
 ## Configuração do Ambiente
 
@@ -65,7 +66,11 @@ A aplicação estará rodando em http://localhost:3000. A documentação Swagger
 ### Restruturacação da entidade Producer:
 
 - Novo Modelo de Entidade: Criar uma nova entidade com relacionamento na propriedade "plantation", permitindo mais flexibilidade além das opções atuais (Soja, Milho, Algodão, Café, Cana de Açúcar);
-- Otimização de Performance: Melhorar a implementação da rota GET /dashboard utilizando um "distinct" por plantação, para otimizar a performance.
+- Otimização de Performance: Melhorar a implementação da rota GET /dashboard utilizando um "distinct" por plantação, para otimizar a performance;
+
+### Cobertura de testes:
+
+- Melhorar cobertura de testes unitários;
 
 ## Considerações Finais
 

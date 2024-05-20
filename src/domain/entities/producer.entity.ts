@@ -18,7 +18,6 @@ export type ProducerProperties = {
 
 export class Producer extends Entity<ProducerProperties> {
   private _document: string;
-  private _producer_name: string;
   private _farm_name: string;
   private _city: string;
   private _state: string;
@@ -31,7 +30,7 @@ export class Producer extends Entity<ProducerProperties> {
   constructor(props: ProducerProperties, id?: string) {
     super(props, id);
     this._document = props.document;
-    this._producer_name = props.producer_name;
+    this.producer_name = props.producer_name;
     this._farm_name = props.farm_name;
     this._city = props.city;
     this._state = props.state;
@@ -48,7 +47,7 @@ export class Producer extends Entity<ProducerProperties> {
     return this._document;
   }
   get producer_name() {
-    return this._producer_name;
+    return this.props.producer_name;
   }
   get farm_name() {
     return this._farm_name;
@@ -78,6 +77,10 @@ export class Producer extends Entity<ProducerProperties> {
   get plantation() {
     return this.props.plantation;
   }
+  private set producer_name(name: string) {
+    this.props.producer_name = name;
+  }
+
   private set plantation(values: string[]) {
     this.props.plantation = values.map((item) => item.toLowerCase());
   }
@@ -107,7 +110,6 @@ export class Producer extends Entity<ProducerProperties> {
     ) {
       throw new Error('Invalid CNPJ');
     }
-
     if (
       this.document.replace(/[^\d]+/g, '').length === 11 &&
       !ValidateCPF(this.document)

@@ -2,7 +2,6 @@ import { Inject, Injectable } from '@nestjs/common';
 import { IProducerRepository } from '../infra/database/interfaces/producer-repository.interface';
 import { Producer } from '../domain/entities/producer.entity';
 import { BodyCreateProducerDTO } from '../presentation/http/dto/body-create-producer.dto';
-import { Logger } from '../commons/application/logger/logger';
 
 @Injectable()
 export class CreateProducerUseCase {
